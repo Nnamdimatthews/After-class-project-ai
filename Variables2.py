@@ -1,0 +1,28 @@
+from textblob import TextBlob
+Name = input("Enter your name: ").capitalize()
+Surname = input("Enter Your Surname: ").capitalize()
+print (f"Good morning {Name} {Surname} Nice to meet you👋🏾\nLet's have a conversation about what you are going to do today")
+Feeling = input("How are you: ")
+p = TextBlob(Feeling).sentiment.polarity
+if p > 0:
+    print("GREAT! you are having a good morning😃")
+    Stuff = input("What are you doing today🧐: ")
+    print(f"Wow. Good luck on {Stuff}😉")
+    Snack = input("What is for snacktime?🧐: ")
+    print(f"Yummy Yummy Yummy enjoy🍩😋")
+    Lunch = input("What is for lunch this afternoon🍽️: ")
+    print(f"yum yum. enjoy your {Lunch}😋")
+    Dinner = input("And Dinner☕:")
+    print(f"Enjoy {Dinner} to")
+    print("Enjoy your day, BYE!")
+elif p < 0:
+    print("Awww, you are not having a good morning😔Get well soon🥲")
+    Stuff = input("What are you doing today🧐: ")
+    print(f"Wow. Good luck on {Stuff}😉")
+    Snack = input("What is for snacktime?🧐: ")
+    print(f"Yummy Yummy Yummy enjoy🍩😋")
+    Lunch = input("What is for lunch this afternoon🍽️: ")
+    print(f"yum yum. enjoy your {Lunch}😋")
+    Dinner = input("And Dinner☕:")
+    print(f"Enjoy {Dinner} to")
+    print("Enjoy your day, BYE!")
