@@ -1,56 +1,77 @@
+import pygame
 import random
 
-# Optional: Track player move history for smarter AI
-player_history = []
+# Initialize pygame
+pygame.init()
 
-# Define possible moves
-moves = ["rock", "paper", "scissors"]
+# Screen setup
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Space Invader – Sunset Edition")
 
-def get_player_move():
-    move = input("Enter your move (rock, paper, scissors): ").lower()
-    while move not in moves:
-        print("Invalid input. Please try again.")
-        move = input("Enter your move (rock, paper, scissors): ").lower()
-    player_history.append(move)
-    return move
+# Colors
+SUNSET_ORANGE = (255, 94, 77)  # Warm sunset fill
+WHITE = (255, 255, 255)
 
-def get_ai_move():
-    # Basic strategy: random choice
-    return random.choice(moves)
+# 🧑‍🚀 Player sprite class
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("player_sprite.png").convert_alpha()  # Replace with your sprite
+        self.rect = self.image.get_rect(center=(WIDTH // 2, HEIGHT - 60))
 
-def determine_winner(player, ai):
-    if player == ai:
-        return "It's a tie!"
-    elif (player == "rock" and ai == "scissors") or \
-         (player == "scissors" and ai == "paper") or \
-         (player == "paper" and ai == "rock"):
-        return "You win!"
-    else:
-        return "AI wins!"
+    def update(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT] and self.rect.left > 0:
+            self.rect.x -= 5
+        if keys[pygame.K_RIGHT] and self.rect.right < WIDTH:
+            self.rect.x += 5
 
-def play_game():
-    player_score = 0
-    ai_score = 0
+# 👾 Enemy sprite class
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("enemy_sprite.png").convert_alpha()  # Replace with your sprite
+        self.rect = self.image.get_rect(
+            center=(random.randint(40, WIDTH - 40), random.randint(40, HEIGHT // 2))
+        )
 
-    while True:
-        print("\n--- New Round ---")
-        player_move = get_player_move()
-        ai_move = get_ai_move()
-        print(f"AI chose: {ai_move}")
+# Sprite groups
+player = Player()
+enemies = pygame.sprite.Group()
+for _ in range(7):
+    enemies.add(Enemy())
 
-        result = determine_winner(player_move, ai_move)
-        print(result)
+all_sprites = pygame.sprite.Group(player, *enemies)
 
-        if "You win" in result:
-            player_score += 1
-        elif "AI wins" in result:
-            ai_score += 1
+# Score setup
+score = 0
+font = pygame.font.SysFont(None, 36)
 
-        print(f"Score -> You: {player_score} | AI: {ai_score}")
+# Game loop
+running = True
+clock = pygame.time.Clock()
 
-        play_again = input("Play another round? (yes/no): ").lower()
-        if play_again != "yes":
-            print("Thanks for playing!")
-            break
+while running:
+    clock.tick(60)
+    screen.fill(SUNSET_ORANGE)  # 🌅 Fill with sunset color
 
-play_game()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Update and draw sprites
+    all_sprites.update()
+    all_sprites.draw(screen)
+
+    # Collision detection
+    hits = pygame.sprite.spritecollide(player, enemies, dokill=True)
+    score += len(hits)
+
+    # Display score
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    screen.blit(score_text, (10, 10))
+
+    pygame.display.flip()
+
+pygame.quit()
